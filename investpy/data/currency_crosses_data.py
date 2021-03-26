@@ -6,7 +6,7 @@ import pkg_resources
 from unidecode import unidecode
 
 import json
-import pandas as pd
+import csv
 
 from ..utils import constant as cst
 
