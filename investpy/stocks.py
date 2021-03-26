@@ -40,7 +40,7 @@ def _get_stock_data_from_csv(country, stock):
         with open(pkg_resources.resource_filename(resource_package, resource_path), newline='') as stocks_file:
             reader = csv.DictReader(stocks_file)
             for stocks in reader:
-                if country in stocks['country'] and stock in stocks['symbol'].lower():
+                if country in stocks['country'] and stock == stocks['symbol'].lower():
                     break
     else:
         raise FileNotFoundError("ERR#0056: stocks file not found or errored.")
