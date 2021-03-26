@@ -10,4 +10,4 @@ from .stocks import get_stock_countries, get_stock_recent_data, \
 
 from .currency_crosses import get_currency_crosses, get_currency_crosses_list, get_currency_crosses_dict, \
     get_available_currencies, get_currency_cross_recent_data, get_currency_cross_historical_data, \
-    get_currency_cross_information, get_currency_crosses_overview, search_currency_crosses
+    get_currency_cross_information, get_currency_crosses_overview 
