@@ -285,7 +285,7 @@ def get_currency_cross_recent_data(currency_cross, as_json=False, order='ascendi
     if currency_crosses is None:
         raise IOError("ERR#0050: currency_crosses not found or unable to retrieve.")
 
-    if currency_cross not in currency_crosses['name'].str.lower():
+    if currency_cross not in currency_crosses['name'].lower():
         raise RuntimeError("ERR#0054: the introduced currency_cross " + str(currency_cross) + " does not exist.")
 
     id_ = currency_crosses['id']
@@ -503,7 +503,7 @@ def get_currency_cross_historical_data(currency_cross, from_date, to_date, as_js
     if currency_crosses is None:
         raise IOError("ERR#0050: currency_crosses not found or unable to retrieve.")
 
-    if currency_cross not in currency_crosses['name'].str.lower():
+    if currency_cross not in currency_crosses['name'].lower():
         raise RuntimeError("ERR#0054: the introduced currency_cross " + str(currency_cross) + " does not exist.")
 
     id_ = currency_crosses['id']
@@ -654,7 +654,7 @@ def get_currency_cross_information(currency_cross, as_json=False):
     if currency_crosses is None:
         raise IOError("ERR#0050: currency_crosses not found or unable to retrieve.")
 
-    if currency_cross not in currency_crosses['name'].str.lower():
+    if currency_cross not in currency_crosses['name'].lower():
         raise RuntimeError("ERR#0054: the introduced currency_cross " + str(currency_cross) + " does not exist.")
 
     name = currency_crosses['name']
