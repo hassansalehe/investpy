@@ -1,3 +1,5 @@
+### NOTE! This is a clone of investpy.
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/alvarobartt/investpy/master/docs/source/_static/logo.png" hspace="20">
 </p>
