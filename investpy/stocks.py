@@ -145,8 +145,8 @@ def get_stock_recent_data(stock, country, as_json=False, order='ascending', inte
     if interval not in ['daily', 'weekly', 'monthly']:
         raise ValueError("ERR#0073: interval value should be a str type and it can just be either 'Daily', 'Weekly' or 'Monthly'.")
 
-    country = unidecode(country.strip().lower())
-    stock = unidecode(stock.strip().lower())
+    country = unidecode(country).strip().lower()
+    stock = unidecode(stock).strip().lower()
     stocks = _get_stock_data_from_csv(country, stock)
 
     if stocks is None:
@@ -158,11 +158,11 @@ def get_stock_recent_data(stock, country, as_json=False, order='ascending', inte
     if stock not in stocks['symbol'].lower():
         raise RuntimeError("ERR#0018: stock " + stock + " not found, check if it is correct.")
 
-    symbol = stocks['symbol']
-    id_ = stocks['id']
-    name = stocks['name']
+    symbol = unidecode(stocks['symbol'])
+    id_ = unidecode(stocks['id'])
+    name = unidecode(stocks['name'])
 
-    stock_currency = stocks['currency']
+    stock_currency = unidecode(stocks['currency'])
 
     header = symbol + ' Historical Data'
 
@@ -180,7 +180,7 @@ def get_stock_recent_data(stock, country, as_json=False, order='ascending', inte
         "User-Agent": random_user_agent(),
         "X-Requested-With": "XMLHttpRequest",
         "Accept": "text/html",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
     }
 
@@ -398,11 +398,11 @@ def get_stock_historical_data(stock, country, from_date, to_date, as_json=False,
     if stock not in stocks['symbol'].lower():
         raise RuntimeError("ERR#0018: stock " + stock + " not found, check if it is correct.")
 
-    symbol = stocks['symbol']
-    id_ = stocks['id']
-    name = stocks['name']
+    symbol = unidecode(stocks['symbol'])
+    id_ = unidecode(stocks['id'])
+    name = unidecode(stocks['name'])
 
-    stock_currency = stocks['currency']
+    stock_currency = unidecode(stocks['currency'])
 
     final = list()
 
@@ -427,7 +427,7 @@ def get_stock_historical_data(stock, country, from_date, to_date, as_json=False,
             "User-Agent": random_user_agent(),
             "X-Requested-With": "XMLHttpRequest",
             "Accept": "text/html",
-            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Encoding": "gzip, deflate",
             "Connection": "keep-alive",
         }
 
@@ -606,7 +606,7 @@ def get_stock_company_profile(stock, country='spain', language='english'):
             "User-Agent": random_user_agent(),
             "X-Requested-With": "XMLHttpRequest",
             "Accept": "text/html",
-            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Encoding": "gzip, deflate",
             "Connection": "keep-alive",
         }
 
@@ -642,7 +642,7 @@ def get_stock_company_profile(stock, country='spain', language='english'):
             "User-Agent": random_user_agent(),
             "X-Requested-With": "XMLHttpRequest",
             "Accept": "text/html",
-            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Encoding": "gzip, deflate",
             "Connection": "keep-alive",
         }
 
@@ -719,7 +719,7 @@ def get_stock_dividends(stock, country):
         "User-Agent": random_user_agent(),
         "X-Requested-With": "XMLHttpRequest",
         "Accept": "text/html",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
     }
 
@@ -785,7 +785,7 @@ def get_stock_dividends(stock, country):
                     "User-Agent": random_user_agent(),
                     "X-Requested-With": "XMLHttpRequest",
                     "Accept": "text/html",
-                    "Accept-Encoding": "gzip, deflate, br",
+                    "Accept-Encoding": "gzip, deflate",
                     "Connection": "keep-alive",
                 }
 
@@ -925,13 +925,13 @@ def get_stock_information(stock, country, as_json=False):
     tag = stocks['tag']
     stock = stocks['symbol']
 
-    url = "https://www.investing.com/equities/" + tag
+    url = f"https://www.investing.com/equities/{tag}"
 
     head = {
         "User-Agent": random_user_agent(),
         "X-Requested-With": "XMLHttpRequest",
         "Accept": "text/html",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
     }
 
@@ -941,31 +941,34 @@ def get_stock_information(stock, country, as_json=False):
         raise ConnectionError("ERR#0015: error " + str(req.status_code) + ", try again later.")
 
     root_ = fromstring(req.text)
-    path_ = root_.xpath("//div[contains(@class, 'overviewDataTable')]/div")
+    path_ = root_.xpath("//dl[contains(@class, 'grid')]/div")
 
     result = {}
     result['Stock Symbol'] = stock
 
+    if not path_:
+        raise RuntimeError("ERR#0004: data retrieval error while scraping.")
+
     if path_:
         for elements_ in path_:
-            element = elements_.xpath(".//span[@class='float_lang_base_1']")[0]
-            title_ = element.text_content()
+            title_ = elements_[0].text_content()
+            value_ = elements_[1].text_content()
             if title_ == "Day's Range":
                 title_ = 'Todays Range'
             if title_ in result.columns.tolist():
                 try:
-                    result[title_] = float(element.getnext().text_content().replace(',', ''))
+                    result[title_] = float(value_.replace(',', ''))
                     continue
                 except:
                     pass
                 try:
-                    text = element.getnext().text_content().strip()
+                    text = value_.strip()
                     result[title_] = datetime.strptime(text, "%b %d, %Y").strftime("%d/%m/%Y")
                     continue
                 except:
                     pass
                 try:
-                    value = element.getnext().text_content().strip()
+                    value = value_.strip()
                     if value.__contains__('B'):
                         value = float(value.replace('B', '').replace(',', '')) * 1e9
                     elif value.__contains__('T'):
