@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 __author__ = 'Alvaro Bartolome @ alvarobartt in GitHub'
-__version__ = '1.0.3'
+__version__ = '1.0.6'
 
 from .stocks import get_stock_countries, get_stock_recent_data, \
     get_stock_historical_data, get_stock_company_profile, \
