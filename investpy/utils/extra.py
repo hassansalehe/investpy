@@ -56,4 +56,4 @@ def random_user_agent():
 
     """
 
-    return str(random.choice(cst.USER_AGENTS))
+    return random.choice(cst.USER_AGENTS)
